@@ -27,7 +27,7 @@
 
 
 
-// globals	
+// globals
 videoSource* stream = NULL;
 imageConverter* image_cvt = NULL;
 Publisher<sensor_msgs::Image> image_pub = NULL;
@@ -67,7 +67,7 @@ bool aquireFrame()
 	// publish the message
 	image_pub->publish(msg);
 	ROS_DEBUG("published %ux%u video frame", stream->GetWidth(), stream->GetHeight());
-	
+
 	return true;
 }
 
@@ -88,11 +88,11 @@ int main(int argc, char **argv)
 	std::string resource_str;
 	std::string codec_str;
 	std::string flip_str;
-	
+
 	int video_width = video_options.width;
 	int video_height = video_options.height;
 	int latency = video_options.latency;
-	
+
 	ROS_DECLARE_PARAMETER("resource", resource_str);
 	ROS_DECLARE_PARAMETER("codec", codec_str);
 	ROS_DECLARE_PARAMETER("width", video_width);
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 	ROS_DECLARE_PARAMETER("loop", video_options.loop);
 	ROS_DECLARE_PARAMETER("flip", flip_str);
 	ROS_DECLARE_PARAMETER("latency", latency);
-	
+
 	/*
 	 * retrieve parameters
 	 */
@@ -110,10 +110,14 @@ int main(int argc, char **argv)
 	ROS_GET_PARAMETER("width", video_width);
 	ROS_GET_PARAMETER("height", video_height);
 	ROS_GET_PARAMETER("framerate", video_options.frameRate);
+
+	// Log the framerate here
+	ROS_INFO("-----------------framerate: %f ------------------------", video_options.frameRate);
+
 	ROS_GET_PARAMETER("loop", video_options.loop);
 	ROS_GET_PARAMETER("flip", flip_str);
 	ROS_GET_PARAMETER("latency", latency);
-	
+
 	if( resource_str.size() == 0 )
 	{
 		ROS_ERROR("resource param wasn't set - please set the node's resource parameter to the input device/filename/URL");
@@ -125,11 +129,11 @@ int main(int argc, char **argv)
 
 	if( flip_str.size() != 0 )
 		video_options.flipMethod = videoOptions::FlipMethodFromStr(flip_str.c_str());
-	
+
 	video_options.width = video_width;
 	video_options.height = video_height;
 	video_options.latency = latency;
-	
+
 	ROS_INFO("opening video source: %s", resource_str.c_str());
 
 	/*
@@ -175,8 +179,12 @@ int main(int argc, char **argv)
 	/*
 	 * start publishing video frames
 	 */
+	ros::Rate loop_rate(20);
 	while( ROS_OK() )
 	{
+		// Sleep for some miliseconds to ensure 20 FPS
+
+
 		if( !aquireFrame() )
 		{
 			if( !stream->IsStreaming() )
@@ -188,6 +196,8 @@ int main(int argc, char **argv)
 
 		if( ROS_OK() )
 			ROS_SPIN_ONCE();
+
+		loop_rate.sleep();  // Sleep to maintain 20 FPS
 	}
 
 
