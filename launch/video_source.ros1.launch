@@ -4,8 +4,9 @@
 	<arg name="input_height" default="0"/>
 	<arg name="input_codec" default="unknown"/>
 	<arg name="input_loop" default="0"/>
+	<arg name="name" default="video_source"/>
 
-	<node pkg="ros_deep_learning" type="video_source" name="video_source" output="screen">
+	<node pkg="ros_deep_learning" type="video_source" name="$(arg name)" output="screen">
 		<param name="resource" value="$(arg input)"/>
 		<param name="width" value="$(arg input_width)"/>
 		<param name="height" value="$(arg input_height)"/>
