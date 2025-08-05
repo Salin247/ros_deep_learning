@@ -5,6 +5,7 @@
 	<arg name="input_codec" default="unknown"/>
 	<arg name="input_loop" default="0"/>
 	<arg name="name" default="video_source"/>
+	<arg name="framerate" default="20"/>
 
 	<node pkg="ros_deep_learning" type="video_source" name="$(arg name)" output="screen">
 		<param name="resource" value="$(arg input)"/>
@@ -12,6 +13,7 @@
 		<param name="height" value="$(arg input_height)"/>
 		<param name="codec" value="$(arg input_codec)"/>
 		<param name="loop" value="$(arg input_loop)"/>
+		<param name="framerate" value="$(arg framerate)"/>
 	</node>
 
 </launch>

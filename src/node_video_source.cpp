@@ -92,6 +92,7 @@ int main(int argc, char **argv)
 	int video_width = video_options.width;
 	int video_height = video_options.height;
 	int latency = video_options.latency;
+	int framerate_custom = 20; // Default framerate
 
 	ROS_DECLARE_PARAMETER("resource", resource_str);
 	ROS_DECLARE_PARAMETER("codec", codec_str);
@@ -110,9 +111,10 @@ int main(int argc, char **argv)
 	ROS_GET_PARAMETER("width", video_width);
 	ROS_GET_PARAMETER("height", video_height);
 	ROS_GET_PARAMETER("framerate", video_options.frameRate);
+	ROS_GET_PARAMETER("framerate", framerate_custom);
 
 	// Log the framerate here
-	ROS_INFO("-----------------framerate: %f ------------------------", video_options.frameRate);
+	ROS_INFO("-----------------framerate: %d ------------------------", framerate_custom);
 
 	ROS_GET_PARAMETER("loop", video_options.loop);
 	ROS_GET_PARAMETER("flip", flip_str);
@@ -179,7 +181,7 @@ int main(int argc, char **argv)
 	/*
 	 * start publishing video frames
 	 */
-	ros::Rate loop_rate(20);
+	ros::Rate loop_rate(framerate_custom);
 	while( ROS_OK() )
 	{
 		// Sleep for some miliseconds to ensure 20 FPS
